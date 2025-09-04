@@ -7,7 +7,7 @@
  * It supports contact management, campaigns, emails, forms, segments, and analytics.
  * 
  * Features:
- * - OAuth2 authentication with automatic token refresh
+ * - Basic authentication with username/password
  * - Contact CRUD operations and search
  * - Campaign management and statistics
  * - Email operations and templates
@@ -28,20 +28,17 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 
 // Environment variables for Mautic configuration
 const MAUTIC_BASE_URL = process.env.MAUTIC_BASE_URL;
-const MAUTIC_CLIENT_ID = process.env.MAUTIC_CLIENT_ID;
-const MAUTIC_CLIENT_SECRET = process.env.MAUTIC_CLIENT_SECRET;
-const MAUTIC_TOKEN_ENDPOINT = process.env.MAUTIC_TOKEN_ENDPOINT;
+const MAUTIC_USERNAME = process.env.MAUTIC_USERNAME;
+const MAUTIC_PASSWORD = process.env.MAUTIC_PASSWORD;
 
-if (!MAUTIC_BASE_URL || !MAUTIC_CLIENT_ID || !MAUTIC_CLIENT_SECRET || !MAUTIC_TOKEN_ENDPOINT) {
-  throw new Error('Missing required Mautic environment variables: MAUTIC_BASE_URL, MAUTIC_CLIENT_ID, MAUTIC_CLIENT_SECRET, MAUTIC_TOKEN_ENDPOINT');
+if (!MAUTIC_BASE_URL || !MAUTIC_USERNAME || !MAUTIC_PASSWORD) {
+  throw new Error('Missing required Mautic environment variables: MAUTIC_BASE_URL, MAUTIC_USERNAME, MAUTIC_PASSWORD');
 }
 
-// OAuth2 token storage
-interface OAuth2Token {
-  access_token: string;
-  refresh_token?: string;
-  expires_at: number;
-  token_type: string;
+// Basic authentication credentials
+interface BasicAuthCredentials {
+  username: string;
+  password: string;
 }
 
 // Type definitions for Mautic API responses
@@ -130,7 +127,7 @@ interface MauticSegment {
 class MauticServer {
   private server: Server;
   private axiosInstance: AxiosInstance;
-  private token: OAuth2Token | null = null;
+  private credentials: BasicAuthCredentials;
 
   constructor() {
     this.server = new Server(
@@ -145,12 +142,20 @@ class MauticServer {
       }
     );
 
+    this.credentials = {
+      username: MAUTIC_USERNAME!,
+      password: MAUTIC_PASSWORD!
+    };
+
     this.axiosInstance = axios.create({
       baseURL: MAUTIC_BASE_URL,
       timeout: 30000,
+      auth: {
+        username: this.credentials.username,
+        password: this.credentials.password
+      }
     });
 
-    this.setupAxiosInterceptors();
     this.setupToolHandlers();
     
     // Error handling
@@ -161,101 +166,6 @@ class MauticServer {
     });
   }
 
-  private setupAxiosInterceptors() {
-    // Request interceptor to add authorization header
-    this.axiosInstance.interceptors.request.use(async (config) => {
-      await this.ensureValidToken();
-      if (this.token) {
-        config.headers.Authorization = `Bearer ${this.token.access_token}`;
-      }
-      return config;
-    });
-
-    // Response interceptor to handle token refresh
-    this.axiosInstance.interceptors.response.use(
-      (response) => response,
-      async (error: AxiosError) => {
-        if (error.response?.status === 401 && this.token?.refresh_token) {
-          try {
-            await this.refreshToken();
-            // Retry the original request
-            const originalRequest = error.config;
-            if (originalRequest) {
-              originalRequest.headers.Authorization = `Bearer ${this.token?.access_token}`;
-              return this.axiosInstance.request(originalRequest);
-            }
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-          }
-        }
-        return Promise.reject(error);
-      }
-    );
-  }
-
-  private async ensureValidToken() {
-    if (!this.token || Date.now() >= this.token.expires_at) {
-      if (this.token?.refresh_token) {
-        await this.refreshToken();
-      } else {
-        await this.getAccessToken();
-      }
-    }
-  }
-
-  private async getAccessToken() {
-    try {
-      const response = await axios.post(MAUTIC_TOKEN_ENDPOINT!, {
-        grant_type: 'client_credentials',
-        client_id: MAUTIC_CLIENT_ID,
-        client_secret: MAUTIC_CLIENT_SECRET,
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
-
-      this.token = {
-        access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token,
-        expires_at: Date.now() + (response.data.expires_in * 1000) - 60000, // 1 minute buffer
-        token_type: response.data.token_type || 'Bearer',
-      };
-    } catch (error) {
-      console.error('Failed to get access token:', error);
-      throw new McpError(ErrorCode.InternalError, 'Failed to authenticate with Mautic API');
-    }
-  }
-
-  private async refreshToken() {
-    if (!this.token?.refresh_token) {
-      await this.getAccessToken();
-      return;
-    }
-
-    try {
-      const response = await axios.post(MAUTIC_TOKEN_ENDPOINT!, {
-        grant_type: 'refresh_token',
-        refresh_token: this.token.refresh_token,
-        client_id: MAUTIC_CLIENT_ID,
-        client_secret: MAUTIC_CLIENT_SECRET,
-      }, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
-
-      this.token = {
-        access_token: response.data.access_token,
-        refresh_token: response.data.refresh_token || this.token.refresh_token,
-        expires_at: Date.now() + (response.data.expires_in * 1000) - 60000,
-        token_type: response.data.token_type || 'Bearer',
-      };
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      await this.getAccessToken();
-    }
-  }
 
   private setupToolHandlers() {
     this.server.setRequestHandler(ListToolsRequestSchema, async () => ({

@@ -2,15 +2,15 @@
 
 A comprehensive Model Context Protocol (MCP) server that provides full integration with Mautic marketing automation platform.
 
-[![GitHub Stars](https://img.shields.io/github/stars/Cbrown35/mantic-MCP?style=social)](https://github.com/Cbrown35/mantic-MCP/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/issues)
-[![GitHub License](https://img.shields.io/github/license/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/blob/main/LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/minholi/mautic-mcp?style=social)](https://github.com/minholi/mautic-mcp/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/minholi/mautic-mcp)](https://github.com/minholi/mautic-mcp/issues)
+[![GitHub License](https://img.shields.io/github/license/minholi/mautic-mcp)](https://github.com/minholi/mautic-mcp/blob/main/LICENSE)
 
 ## 🚀 Quick Start
 
 ```bash
 # Clone and setup
-git clone https://github.com/Cbrown35/mantic-MCP.git
+git clone https://github.com/minholi/mautic-mcp.git
 cd mantic-MCP
 npm install
 
@@ -32,7 +32,7 @@ Then add the server to your MCP configuration and start using natural language c
 This MCP server provides complete access to your Mautic instance with the following capabilities:
 
 ### 🔐 Authentication
-- OAuth2 authentication with automatic token refresh
+- Basic authentication with username and password
 - Secure credential management through environment variables
 
 ### 👥 Contact Management
@@ -120,7 +120,7 @@ This MCP server provides complete access to your Mautic instance with the follow
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/Cbrown35/mantic-MCP.git
+   git clone https://github.com/minholi/mautic-mcp.git
    cd mantic-MCP
    ```
 
@@ -136,9 +136,8 @@ This MCP server provides complete access to your Mautic instance with the follow
    Edit `.env` and fill in your Mautic API credentials:
    ```env
    MAUTIC_BASE_URL=https://your-mautic-instance.com/api/
-   MAUTIC_CLIENT_ID=your_client_id_here
-   MAUTIC_CLIENT_SECRET=your_client_secret_here
-   MAUTIC_TOKEN_ENDPOINT=https://your-mautic-instance.com/oauth/v2/token
+   MAUTIC_USERNAME=your_username_here
+   MAUTIC_PASSWORD=your_password_here
    ```
 
 4. **Build the server:**
@@ -156,9 +155,8 @@ This MCP server provides complete access to your Mautic instance with the follow
          "args": ["/path/to/mautic-server/build/index.js"],
          "env": {
            "MAUTIC_BASE_URL": "https://your-mautic-instance.com/api/",
-           "MAUTIC_CLIENT_ID": "your_client_id",
-           "MAUTIC_CLIENT_SECRET": "your_client_secret",
-           "MAUTIC_TOKEN_ENDPOINT": "https://your-mautic-instance.com/oauth/v2/token"
+           "MAUTIC_USERNAME": "your_username",
+           "MAUTIC_PASSWORD": "your_password"
          },
          "disabled": false,
          "autoApprove": []
@@ -176,18 +174,15 @@ The server requires the following environment variables:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `MAUTIC_BASE_URL` | Your Mautic API base URL | `https://your-mautic.com/api/` |
-| `MAUTIC_CLIENT_ID` | OAuth2 Client ID | `1_abc123...` |
-| `MAUTIC_CLIENT_SECRET` | OAuth2 Client Secret | `secret123...` |
-| `MAUTIC_TOKEN_ENDPOINT` | OAuth2 Token Endpoint | `https://your-mautic.com/oauth/v2/token` |
+| `MAUTIC_USERNAME` | Your Mautic username | `admin` |
+| `MAUTIC_PASSWORD` | Your Mautic password | `your_password` |
 
 ### Obtaining Mautic API Credentials
 
 1. Log into your Mautic instance as an administrator
 2. Go to Settings → Configuration → API Settings
-3. Enable API access
-4. Go to Settings → API Credentials
-5. Create a new API credential with OAuth2 authorization
-6. Note down the Client ID and Client Secret
+3. Enable API access and ensure Basic Auth is enabled
+4. Use your Mautic admin username and password for authentication
 
 ## Usage Examples
 
@@ -231,7 +226,7 @@ The server connects to your Mautic instance at `https://mailer.dzind.com/api/` a
 ## Error Handling
 
 The server includes comprehensive error handling:
-- Automatic OAuth2 token refresh
+- Basic authentication for simple setup
 - Detailed error messages from Mautic API
 - Graceful handling of authentication failures
 - Retry logic for transient errors
@@ -239,7 +234,7 @@ The server includes comprehensive error handling:
 ## Security
 
 - All credentials are stored as environment variables
-- OAuth2 tokens are automatically refreshed
+- Basic authentication with username/password
 - No sensitive data is logged or exposed
 - Secure HTTPS communication with Mautic API
 
@@ -257,7 +252,7 @@ To modify or extend the server:
 
 1. **Clone and build:**
    ```bash
-   git clone https://github.com/Cbrown35/mantic-MCP.git
+   git clone https://github.com/minholi/mautic-mcp.git
    cd mantic-MCP
    npm install
    npm run build
