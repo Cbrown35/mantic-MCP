@@ -1,12 +1,12 @@
 # Mautic MCP Server
 
-A comprehensive Model Context Protocol (MCP) server that provides full integration with Mautic marketing automation platform.
+A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 68 tools.
 
 [![GitHub Stars](https://img.shields.io/github/stars/Cbrown35/mantic-MCP?style=social)](https://github.com/Cbrown35/mantic-MCP/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/issues)
 [![GitHub License](https://img.shields.io/github/license/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/blob/main/LICENSE)
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Clone and setup
@@ -24,18 +24,45 @@ npm run build
 
 Then add the server to your MCP configuration and start using natural language commands like:
 - "Search for all contacts with gmail in their email"
-- "Create a new contact named John Doe"
-- "List all email campaigns"
+- "Create a new project to organize my Q1 campaign resources"
+- "Clone campaign 5 and export it for staging"
+- "Send email template 12 to its assigned segment"
+
+## What's New in v2.0 (Mautic 7 Support)
+
+### Projects (API v2)
+Organize marketing resources under a single logical structure using Mautic 7's new API Platform v2 endpoints.
+- **list_projects**, **get_project**, **create_project**, **update_project**, **patch_project**, **delete_project**
+
+### Campaign Import/Export
+Move complete campaign setups between environments.
+- **clone_campaign** - Clone an existing campaign
+- **export_campaign** - Export campaign data with all related assets
+- **import_campaign** - Import a campaign from JSON data
+
+### Campaign Analytics
+- **get_campaign_event_details** - Detailed metrics for campaign events
+- **get_campaign_graph_stats** - Campaign graph statistics for date ranges
+- **get_campaign_map_stats** - Geographic map statistics
+
+### Segment-Based Email Sending
+- **send_email_to_segment** - Send email to assigned segments with real-time audience adaptation
+
+### Email Reply Tracking
+- **record_email_reply** - Record email replies by tracking hash
+- **get_email_graph_stats** - Email graph statistics for date ranges
+
+### Deprecation Notice
+SMS API classes have been removed in Mautic 7. The `list_sms` and `create_sms` tools include deprecation warnings.
 
 ## Features
 
-This MCP server provides complete access to your Mautic instance with the following capabilities:
-
-### 🔐 Authentication
+### Authentication
 - OAuth2 authentication with automatic token refresh
 - Secure credential management through environment variables
+- Dual API support: v1 (FOSRestBundle) and v2 (API Platform)
 
-### 👥 Contact Management
+### Contact Management (6 tools)
 - **create_contact** - Create new contacts with custom fields
 - **update_contact** - Update existing contact information
 - **get_contact** - Retrieve contact details by ID or email
@@ -43,78 +70,92 @@ This MCP server provides complete access to your Mautic instance with the follow
 - **delete_contact** - Remove contacts from Mautic
 - **add_contact_to_segment** - Add contacts to specific segments
 
-### 📧 Campaign Management
+### Campaign Management (13 tools)
 - **list_campaigns** - Get all campaigns with status and statistics
 - **get_campaign** - Get detailed campaign information
 - **create_campaign** - Create new campaigns
 - **add_contact_to_campaign** - Add contacts to campaigns
-- **create_campaign_with_automation** - Create campaigns with full event automation (🔥 NEW)
-- **execute_campaign** - Manually execute/trigger campaigns (🔥 NEW)
-- **get_campaign_contacts** - Get contacts in a campaign with their status (🔥 NEW)
+- **create_campaign_with_automation** - Create campaigns with full event automation
+- **execute_campaign** - Manually execute/trigger campaigns
+- **get_campaign_contacts** - Get contacts in a campaign with their status
+- **clone_campaign** - Clone an existing campaign (Mautic 7)
+- **export_campaign** - Export campaign data with assets (Mautic 7)
+- **import_campaign** - Import campaign from JSON data (Mautic 7)
+- **get_campaign_event_details** - Campaign event metrics (Mautic 7)
+- **get_campaign_graph_stats** - Campaign graph statistics (Mautic 7)
+- **get_campaign_map_stats** - Campaign geographic stats (Mautic 7)
 
-### ✉️ Email Operations
+### Email Operations (8 tools)
 - **send_email** - Send emails to specific contacts
 - **list_emails** - Get all email templates and campaigns
 - **get_email** - Get detailed email information
 - **create_email_template** - Create new email templates
 - **get_email_stats** - Get email performance statistics
+- **send_email_to_segment** - Send email to segments (Mautic 7)
+- **record_email_reply** - Record email reply by tracking hash (Mautic 7)
+- **get_email_graph_stats** - Email graph statistics (Mautic 7)
 
-### 📝 Form Management
+### Form Management (3 tools)
 - **list_forms** - Get all forms with submission counts
 - **get_form** - Get form details and fields
 - **get_form_submissions** - Get form submission data
 
-### 🎯 Segment Management
+### Segment Management (3 tools)
 - **list_segments** - Get all contact segments
 - **create_segment** - Create new contact segments with filters
 - **get_segment_contacts** - Get contacts in a specific segment
 
-### 📊 Analytics & Reporting
+### Content Management (7 tools)
+- **list_assets** - Get all assets (PDFs, images, documents)
+- **get_asset** - Get asset details by ID
+- **create_asset** - Create new assets (local or remote)
+- **list_pages** - Get all landing pages
+- **create_page** - Create new landing pages
+- **list_sms** - Get all SMS templates [DEPRECATED in Mautic 7]
+- **create_sms** - Create SMS templates [DEPRECATED in Mautic 7]
+
+### Business Entities (10 tools)
+- **list_companies** - Get all companies
+- **create_company** - Create new companies
+- **add_contact_to_company** - Associate contacts with companies
+- **create_note** - Add notes to contacts or companies
+- **get_contact_notes** - Get all notes for a contact
+- **list_tags** - Get all available tags
+- **create_tag** - Create new tags
+- **add_contact_tags** - Add tags to contacts
+- **list_categories** - Get all categories
+- **create_category** - Create new categories
+
+### Advanced Features (7 tools)
+- **add_contact_points** - Add points to contacts
+- **subtract_contact_points** - Subtract points from contacts
+- **list_stages** - Get all lifecycle stages
+- **change_contact_stage** - Change contact's lifecycle stage
+- **list_contact_fields** - Get all contact custom fields
+- **create_contact_field** - Create new contact custom fields
 - **get_contact_activity** - Get contact interaction history
-- **get_email_stats** - Get email performance statistics
-- **list_reports** - Get all reports (⭐ NEW)
-- **create_report** - Create custom reports (⭐ NEW)
 
-### 📎 Content Management
-- **list_assets** - Get all assets (PDFs, images, documents) (⭐ NEW)
-- **get_asset** - Get asset details by ID (⭐ NEW)
-- **create_asset** - Create new assets (local or remote) (⭐ NEW)
-- **list_pages** - Get all landing pages (⭐ NEW)
-- **create_page** - Create new landing pages (⭐ NEW)
-- **list_sms** - Get all SMS templates (⭐ NEW)
-- **create_sms** - Create SMS templates (⭐ NEW)
+### Integration & Automation (5 tools)
+- **list_webhooks** - Get all webhooks
+- **create_webhook** - Create new webhooks
+- **upload_file** - Upload files to Mautic
+- **list_reports** - Get all reports
+- **create_report** - Create custom reports
 
-### 🏢 Business Entities
-- **list_companies** - Get all companies (⭐ NEW)
-- **create_company** - Create new companies (⭐ NEW)
-- **add_contact_to_company** - Associate contacts with companies (⭐ NEW)
-- **create_note** - Add notes to contacts or companies (⭐ NEW)
-- **get_contact_notes** - Get all notes for a contact (⭐ NEW)
-- **list_tags** - Get all available tags (⭐ NEW)
-- **create_tag** - Create new tags (⭐ NEW)
-- **add_contact_tags** - Add tags to contacts (⭐ NEW)
-- **list_categories** - Get all categories (⭐ NEW)
-- **create_category** - Create new categories (⭐ NEW)
-
-### 🎯 Advanced Features
-- **add_contact_points** - Add points to contacts (📈 NEW)
-- **subtract_contact_points** - Subtract points from contacts (📈 NEW)
-- **list_stages** - Get all lifecycle stages (📈 NEW)
-- **change_contact_stage** - Change contact's lifecycle stage (📈 NEW)
-- **list_contact_fields** - Get all contact custom fields (📈 NEW)
-- **create_contact_field** - Create new contact custom fields (📈 NEW)
-
-### 🔧 Integration & Automation
-- **list_webhooks** - Get all webhooks (🔧 NEW)
-- **create_webhook** - Create new webhooks (🔧 NEW)
-- **upload_file** - Upload files to Mautic (🔧 NEW)
+### Project Management - API v2 (6 tools, Mautic 7)
+- **list_projects** - List all projects
+- **get_project** - Get project details
+- **create_project** - Create a new project
+- **update_project** - Fully update an existing project
+- **patch_project** - Partially update a project
+- **delete_project** - Delete a project
 
 ## Installation
 
 ### Prerequisites
 - Node.js (v16 or higher)
 - npm or yarn
-- Access to a Mautic instance with API credentials
+- Access to a Mautic 7 instance with API credentials
 
 ### Setup
 
@@ -167,11 +208,52 @@ This MCP server provides complete access to your Mautic instance with the follow
    }
    ```
 
+## Architecture
+
+### Dual API Support
+
+Mautic 7 has a three-tier API architecture:
+
+| Layer | Purpose | Endpoints |
+|-------|---------|-----------|
+| **API Platform 4.x** | New v2 REST endpoints (JSON-LD/Hydra) | `/api/v2/projects` |
+| **FOSRestBundle** | Existing v1 endpoints | `/api/contacts`, `/api/campaigns`, etc. |
+| **FOSOAuthServerBundle** | OAuth2 authentication | `/oauth/v2/token` |
+
+The MCP server automatically manages both API versions. v1 endpoints use the configured `MAUTIC_BASE_URL` directly, while v2 endpoints are derived automatically.
+
+### Project Structure
+
+```
+src/
+├── index.ts              # Entry point: server setup and startup
+├── types/                # TypeScript interfaces
+│   ├── common.ts         # Shared types (OAuth2Token, ToolResult, etc.)
+│   ├── contacts.ts       # MauticContact interface
+│   ├── campaigns.ts      # MauticCampaign interface
+│   ├── emails.ts         # MauticEmail interface
+│   ├── forms.ts          # MauticForm interface
+│   ├── segments.ts       # MauticSegment interface
+│   └── projects.ts       # MauticProject interface (Mautic 7)
+├── api/
+│   └── client.ts         # Dual API client (v1 + v2) with OAuth2
+└── tools/
+    ├── index.ts           # Tool registry and dispatch
+    ├── contacts.ts        # Contact tools
+    ├── campaigns.ts       # Campaign tools (includes Mautic 7 additions)
+    ├── emails.ts          # Email tools (includes Mautic 7 additions)
+    ├── forms.ts           # Form tools
+    ├── segments.ts        # Segment tools
+    ├── projects.ts        # Project tools (Mautic 7 API v2)
+    ├── content.ts         # Asset, page, and SMS tools
+    ├── business.ts        # Company, note, tag, and category tools
+    ├── advanced.ts        # Points, stages, fields, and activity tools
+    └── integration.ts     # Webhook, file, and report tools
+```
+
 ## Configuration
 
 ### Environment Variables
-
-The server requires the following environment variables:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
@@ -183,56 +265,17 @@ The server requires the following environment variables:
 ### Obtaining Mautic API Credentials
 
 1. Log into your Mautic instance as an administrator
-2. Go to Settings → Configuration → API Settings
+2. Go to Settings > Configuration > API Settings
 3. Enable API access
-4. Go to Settings → API Credentials
+4. Go to Settings > API Credentials
 5. Create a new API credential with OAuth2 authorization
 6. Note down the Client ID and Client Secret
-
-## Usage Examples
-
-Once the server is running, you can use it through MCP tool calls:
-
-### Create a Contact
-```
-Create a new contact with email "john@example.com", first name "John", and last name "Doe"
-```
-
-### Search Contacts
-```
-Search for all contacts with "gmail" in their email address
-```
-
-### Send Email
-```
-Send email template ID 5 to contact ID 123
-```
-
-### Get Campaign Statistics
-```
-Get detailed information for campaign ID 10
-```
-
-### List Forms
-```
-Show me all published forms with their submission counts
-```
-
-## API Endpoints
-
-The server connects to your Mautic instance at `https://mailer.dzind.com/api/` and uses the following main endpoints:
-
-- `/contacts` - Contact management
-- `/campaigns` - Campaign operations
-- `/emails` - Email management
-- `/forms` - Form operations
-- `/segments` - Segment management
 
 ## Error Handling
 
 The server includes comprehensive error handling:
 - Automatic OAuth2 token refresh
-- Detailed error messages from Mautic API
+- Detailed error messages from both v1 and v2 API formats
 - Graceful handling of authentication failures
 - Retry logic for transient errors
 
@@ -247,103 +290,20 @@ The server includes comprehensive error handling:
 
 To modify or extend the server:
 
-1. Edit the source code in `src/index.ts`
-2. Build the server: `npm run build`
-3. The server will automatically reload with your changes
+1. Edit the source code in the `src/` directory
+2. Add new tools by creating a file in `src/tools/` and importing it in `src/tools/index.ts`
+3. Build the server: `npm run build`
+4. Test with the MCP Inspector: `npm run inspector`
 
-## 🚀 Deployment
+## Contributing
 
-### Production Deployment
+We welcome contributions! Please see the repository for contribution guidelines.
 
-1. **Clone and build:**
-   ```bash
-   git clone https://github.com/Cbrown35/mantic-MCP.git
-   cd mantic-MCP
-   npm install
-   npm run build
-   ```
-
-2. **Set up environment variables** in your production environment
-3. **Configure your MCP client** to point to the built server
-4. **Monitor logs** for any authentication or API issues
-
-### Docker Deployment (Coming Soon)
-
-Docker support is planned for easier deployment and scaling.
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to get started:
-
-### Development Setup
-
-1. **Fork the repository** on GitHub
-2. **Clone your fork:**
-   ```bash
-   git clone https://github.com/yourusername/mantic-MCP.git
-   cd mantic-MCP
-   ```
-
-3. **Create a feature branch:**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-4. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-5. **Make your changes** and test thoroughly
-6. **Build and test:**
-   ```bash
-   npm run build
-   # Test your changes with a real Mautic instance
-   ```
-
-7. **Commit and push:**
-   ```bash
-   git add .
-   git commit -m "Add your feature description"
-   git push origin feature/your-feature-name
-   ```
-
-8. **Create a Pull Request** on GitHub
-
-### Contribution Guidelines
-
-- Follow TypeScript best practices
-- Add comprehensive error handling
-- Update documentation for new features
-- Test with real Mautic instances when possible
-- Maintain backward compatibility
-
-### Reporting Issues
-
-Found a bug or have a feature request? Please [open an issue](https://github.com/Cbrown35/mantic-MCP/issues) with:
-
-- Clear description of the problem or feature
-- Steps to reproduce (for bugs)
-- Your environment details (Node.js version, Mautic version, etc.)
-- Expected vs actual behavior
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Built with the [Model Context Protocol SDK](https://github.com/modelcontextprotocol/typescript-sdk)
-- Integrates with [Mautic](https://www.mautic.org/) marketing automation platform
-- Inspired by the need for seamless marketing automation integration
-
-## Support
-
-This server provides comprehensive integration with Mautic's REST API. For specific API documentation, refer to your Mautic instance's API documentation.
-
-### Getting Help
-
-- 📖 [Documentation](https://github.com/Cbrown35/mantic-MCP/blob/main/README.md)
-- 🐛 [Report Issues](https://github.com/Cbrown35/mantic-MCP/issues)
-- 💬 [Discussions](https://github.com/Cbrown35/mantic-MCP/discussions)
-- 📧 Contact: [Create an issue](https://github.com/Cbrown35/mantic-MCP/issues/new) for support
+- Built with the [Model Context Protocol SDK](https://github.com/modelcontextprotocol/typescript-sdk) v1.26.0
+- Integrates with [Mautic 7](https://www.mautic.org/) (Columba Edition)
