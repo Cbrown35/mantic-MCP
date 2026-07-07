@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/cbrown35-mantic-mcp-badge.png)](https://mseep.ai/app/cbrown35-mantic-mcp)
+
 # Mautic MCP Server
 
 A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 68 tools.
