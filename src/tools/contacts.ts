@@ -2,6 +2,31 @@ import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 import type { MauticApiClient } from '../api/client.js';
 import type { ToolDefinition, ToolHandler } from '../types/index.js';
 
+function normalizeContactPayload(args: any) {
+  const customFields = args?.customFields ?? {};
+  const payload = {
+    ...args,
+    ...customFields,
+  };
+
+  const normalizedFirstName = customFields.firstname ?? payload.firstname ?? args?.firstName;
+  const normalizedLastName = customFields.lastname ?? payload.lastname ?? args?.lastName;
+
+  delete payload.customFields;
+  delete payload.firstName;
+  delete payload.lastName;
+
+  if (normalizedFirstName !== undefined) {
+    payload.firstname = normalizedFirstName;
+  }
+
+  if (normalizedLastName !== undefined) {
+    payload.lastname = normalizedLastName;
+  }
+
+  return payload;
+}
+
 export const toolDefinitions: ToolDefinition[] = [
   {
     name: 'create_contact',
@@ -92,7 +117,7 @@ export const toolDefinitions: ToolDefinition[] = [
 
 export const toolHandlers: Record<string, ToolHandler> = {
   async create_contact(client: MauticApiClient, args: any) {
-    const response = await client.v1.post('/contacts/new', args);
+    const response = await client.v1.post('/contacts/new', normalizeContactPayload(args));
     return {
       content: [{ type: 'text', text: `Contact created successfully:\n${JSON.stringify(response.data.contact, null, 2)}` }],
     };
@@ -100,7 +125,7 @@ export const toolHandlers: Record<string, ToolHandler> = {
 
   async update_contact(client: MauticApiClient, args: any) {
     const { id, ...updateData } = args;
-    const response = await client.v1.patch(`/contacts/${id}/edit`, updateData);
+    const response = await client.v1.patch(`/contacts/${id}/edit`, normalizeContactPayload(updateData));
     return {
       content: [{ type: 'text', text: `Contact updated successfully:\n${JSON.stringify(response.data.contact, null, 2)}` }],
     };
