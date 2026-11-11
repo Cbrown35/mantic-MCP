@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "axios": "^1.10.0"
+    "axios": "^1.10.0",
+    "mjml": "^5.4.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

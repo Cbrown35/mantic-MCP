@@ -1,6 +1,6 @@
 # Mautic MCP Server
 
-A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 68 tools.
+A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 69 tools.
 
 [![GitHub Stars](https://img.shields.io/github/stars/Cbrown35/mantic-MCP?style=social)](https://github.com/Cbrown35/mantic-MCP/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/issues)
@@ -85,15 +85,31 @@ SMS API classes have been removed in Mautic 7. The `list_sms` and `create_sms` t
 - **get_campaign_graph_stats** - Campaign graph statistics (Mautic 7)
 - **get_campaign_map_stats** - Campaign geographic stats (Mautic 7)
 
-### Email Operations (8 tools)
+### Email Operations (9 tools)
 - **send_email** - Send emails to specific contacts
 - **list_emails** - Get all email templates and campaigns
-- **get_email** - Get detailed email information
-- **create_email_template** - Create new email templates
+- **get_email** - Get detailed email information (includes the builder's MJML as `grapesjsbuilder.customMjml` when there is one)
+- **create_email_template** - Create new email templates, optionally from MJML (`customMjml`) so they stay editable in the GrapesJS builder
+- **update_email** - Update an existing email; send `customMjml` to change a builder email's content (see below)
 - **get_email_stats** - Get email performance statistics
 - **send_email_to_segment** - Send email to segments (Mautic 7)
 - **record_email_reply** - Record email reply by tracking hash (Mautic 7)
 - **get_email_graph_stats** - Email graph statistics (Mautic 7)
+
+#### Builder-editable emails (MJML)
+Mautic's GrapesJS builder edits an email's MJML source, which Mautic stores apart from the
+HTML it sends. An email created with only `customHtml` opens in the builder as read-only code.
+- `create_email_template` and `update_email` accept `customMjml`. It is sent as
+  `grapesjsbuilder.customMjml`, which makes the email editable in the builder.
+- When `customMjml` is given without `customHtml`, the HTML is compiled from the MJML (mjml 5,
+  `<mj-include>` disabled). Mautic replaces the email's HTML whenever MJML is sent, so sending
+  MJML alone would otherwise leave the email with no HTML.
+- `update_email` with `customMjml` also clears the builder's saved editor state (Mautic 7.2+),
+  which the builder would otherwise load instead of the new MJML.
+- `update_email` refuses to change only `customHtml` on an email that has MJML, because the next
+  builder save would overwrite it. Set `allowMjmlDesync: true` to do it anyway.
+- MJML validation is soft: problems come back as warnings, because MJML the builder itself writes
+  does not pass strict validation.
 
 ### Form Management (3 tools)
 - **list_forms** - Get all forms with submission counts
