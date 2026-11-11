@@ -14,11 +14,13 @@
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "test": "npm run build && node --test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "axios": "^1.10.0"
+    "axios": "^1.10.0",
+    "mjml": "^5.4.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",

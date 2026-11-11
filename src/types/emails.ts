@@ -6,6 +6,8 @@ export interface MauticEmail {
   fromName?: string;
   replyToAddress?: string;
   customHtml?: string;
+  /** MJML source kept by Mautic's GrapesJS builder, returned when the email has one. */
+  grapesjsbuilder?: { customMjml?: string };
   plainText?: string;
   template?: string;
   emailType?: string;

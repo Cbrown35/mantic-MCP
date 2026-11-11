@@ -1,6 +1,6 @@
 # Mautic MCP Server
 
-A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 68 tools.
+A comprehensive Model Context Protocol (MCP) server for Mautic 7 (Columba Edition) marketing automation platform. Supports both v1 (FOSRestBundle) and v2 (API Platform) endpoints with 69 tools.
 
 [![GitHub Stars](https://img.shields.io/github/stars/Cbrown35/mantic-MCP?style=social)](https://github.com/Cbrown35/mantic-MCP/stargazers)
 [![GitHub Issues](https://img.shields.io/github/issues/Cbrown35/mantic-MCP)](https://github.com/Cbrown35/mantic-MCP/issues)
@@ -85,15 +85,43 @@ SMS API classes have been removed in Mautic 7. The `list_sms` and `create_sms` t
 - **get_campaign_graph_stats** - Campaign graph statistics (Mautic 7)
 - **get_campaign_map_stats** - Campaign geographic stats (Mautic 7)
 
-### Email Operations (8 tools)
+### Email Operations (9 tools)
 - **send_email** - Send emails to specific contacts
 - **list_emails** - Get all email templates and campaigns
-- **get_email** - Get detailed email information
-- **create_email_template** - Create new email templates
+- **get_email** - Get detailed email information (includes the builder's MJML as `grapesjsbuilder.customMjml` when there is one)
+- **create_email_template** - Create new email templates, optionally from MJML (`customMjml`) so they stay editable in the GrapesJS builder
+- **update_email** - Update an existing email; send `customMjml` to change a builder email's content (see below)
 - **get_email_stats** - Get email performance statistics
 - **send_email_to_segment** - Send email to segments (Mautic 7)
 - **record_email_reply** - Record email reply by tracking hash (Mautic 7)
 - **get_email_graph_stats** - Email graph statistics (Mautic 7)
+
+#### Builder-editable emails (MJML)
+Mautic's GrapesJS builder edits an email's MJML source, which Mautic stores apart from the
+HTML it sends. An email created with only `customHtml` opens in the builder's HTML or code mode,
+not in the MJML drag-and-drop editor.
+- `create_email_template` and `update_email` accept `customMjml`. It is sent as
+  `grapesjsbuilder.customMjml`, which makes the email open in the MJML editor. The tools check
+  that Mautic stored it and report an error if not (for example when the GrapesJS Builder plugin
+  is unpublished). An email on the code-mode theme keeps the builder off; the tools say so.
+- The MJML is always compiled (mjml 5, `<mj-include>` never resolved), so MJML the parser
+  cannot read is refused before anything is sent. mjml is lenient: unclosed tags are closed for
+  you, and validation problems come back as warnings, because MJML the builder itself writes does
+  not pass strict validation.
+- When `customHtml` is missing or blank, it is compiled from the MJML. Mautic replaces the email's
+  HTML whenever MJML is sent, so sending MJML alone would otherwise leave the email with no HTML.
+  A `customHtml` you pass is stored as given and not compared with the MJML. Either way, the
+  builder recompiles the MJML with its own mjml version the next time the email is saved there.
+- `update_email` with `customMjml` also clears the builder's saved editor state (Mautic 7.2+),
+  which the builder would otherwise load instead of the new MJML.
+- `update_email` refuses to change only `customHtml` on an email that has MJML, because the next
+  builder save would overwrite it. Set `allowMjmlDesync: true` to do it anyway. It also refuses
+  an empty `customHtml`.
+- `update_email` changes only the fields you give. On Mautic 6 an API PATCH resets an email's
+  dynamic content and unlinks a translation from its parent unless those are sent too, so the tool
+  reads the email first and sends its current dynamic content and translation parent along.
+- Pass MJML as `customMjml` only. Raw `grapesjsbuilder` or `emailform` arguments are refused:
+  Mautic's builder plugin reads both, and either can empty the email's HTML.
 
 ### Form Management (3 tools)
 - **list_forms** - Get all forms with submission counts
@@ -293,7 +321,8 @@ To modify or extend the server:
 1. Edit the source code in the `src/` directory
 2. Add new tools by creating a file in `src/tools/` and importing it in `src/tools/index.ts`
 3. Build the server: `npm run build`
-4. Test with the MCP Inspector: `npm run inspector`
+4. Run the tests: `npm test` (builds, then runs the tests in `test/` with Node's built-in test runner; no Mautic needed)
+5. Test with the MCP Inspector: `npm run inspector`
 
 ## Contributing
 
