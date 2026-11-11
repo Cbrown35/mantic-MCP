@@ -181,6 +181,8 @@ SMS API classes have been removed in Mautic 7. The `list_sms` and `create_sms` t
    MAUTIC_CLIENT_SECRET=your_client_secret_here
    MAUTIC_TOKEN_ENDPOINT=https://your-mautic-instance.com/oauth/v2/token
    ```
+   The server reads this `.env` file from the project root at startup. Variables set in the
+   environment (for example in the MCP config's `env` block below) take precedence over it.
 
 4. **Build the server:**
    ```bash

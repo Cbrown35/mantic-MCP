@@ -23,9 +23,44 @@ import {
   McpError,
 } from "@modelcontextprotocol/sdk/types.js";
 import axios from 'axios';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { MauticApiClient } from './api/client.js';
 import { allToolDefinitions, dispatchTool } from './tools/index.js';
+
+function loadLocalEnvFile() {
+  const currentFile = fileURLToPath(import.meta.url);
+  const envPath = resolve(dirname(currentFile), '..', '.env');
+
+  if (!existsSync(envPath)) {
+    return;
+  }
+
+  const envContents = readFileSync(envPath, 'utf8');
+  for (const rawLine of envContents.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) {
+      continue;
+    }
+
+    const separatorIndex = line.indexOf('=');
+    if (separatorIndex === -1) {
+      continue;
+    }
+
+    const key = line.slice(0, separatorIndex).trim();
+    if (!key || process.env[key] !== undefined) {
+      continue;
+    }
+
+    const value = line.slice(separatorIndex + 1).trim().replace(/^(["'])(.*)\1$/, '$2');
+    process.env[key] = value;
+  }
+}
+
+loadLocalEnvFile();
 
 // Environment variables for Mautic configuration
 const MAUTIC_BASE_URL = process.env.MAUTIC_BASE_URL;
